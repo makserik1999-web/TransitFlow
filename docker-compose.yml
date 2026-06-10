@@ -1,0 +1,23 @@
+# Локальный Postgres для разработки.
+# Приложение запускается отдельно (uvicorn) и ходит в эту базу через DATABASE_URL.
+# На Railway этот файл не нужен — там свой управляемый Postgres.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: transitflow_db
+    environment:
+      POSTGRES_USER: transitflow
+      POSTGRES_PASSWORD: transitflow
+      POSTGRES_DB: transitflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - transitflow_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U transitflow -d transitflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  transitflow_pgdata:
